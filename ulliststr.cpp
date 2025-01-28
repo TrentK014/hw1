@@ -1,6 +1,7 @@
 #include <cstddef>
 #include <stdexcept>
 #include "ulliststr.h"
+//#include <iostream>
 
 ULListStr::ULListStr()
 {
@@ -25,6 +26,181 @@ size_t ULListStr::size() const
 }
 
 // WRITE YOUR CODE HERE
+
+void ULListStr::push_front(const std::string& val)
+{
+  if (head_ == nullptr)
+  {
+    Item* temp = new Item();
+    temp->last = 10;
+    temp->first = 9;
+    temp->val[9] = val;
+    head_ = temp;
+    tail_ = temp;
+    size_++;
+  }
+  else if (head_->first > 0)
+  {
+    head_->first--;
+    head_->val[head_->first] = val;
+    size_++;
+  }
+  else
+  {
+    Item* temp = new Item();
+    temp->last = ARRSIZE;
+    temp->first = ARRSIZE - 1;
+    temp->next = head_;
+    head_->prev = temp;
+    temp->val[ARRSIZE - 1] = val;
+    head_ = temp;
+    size_ += 1;
+  }
+}
+
+void ULListStr::push_back(const std::string& val)
+{
+  if (head_ == nullptr)
+  {
+    Item* temp = new Item();
+    temp->last = 1;
+    temp->first = 0;
+    temp->val[0] = val;
+    head_ = temp;
+    tail_ = temp;
+    size_ += 1;
+  }
+  else if (tail_->last == ARRSIZE)
+  {
+    Item* temp = new Item();
+    temp->last = 1;
+    temp->first = 0;
+    temp->val[0] = val;
+    tail_->next = temp;
+    temp->prev = tail_; 
+    tail_ = temp;
+    size_ += 1;
+  }
+  else
+  {
+    tail_->val[tail_->last] = val;
+    tail_->last += 1;
+    size_++;
+  }
+}
+
+void ULListStr::pop_front()
+{
+  if (head_ == nullptr)
+  {
+    return;
+  }
+  if (head_->first == ARRSIZE - 1)
+  {
+    if (head_->next == nullptr)
+    {
+      delete head_;
+      head_ = nullptr;
+      tail_ = nullptr;
+      size_ = 0;
+    }
+    else
+    {
+      Item* temp = head_;
+      head_ = head_->next; 
+      delete temp;
+      size_ -= 1;
+    }
+  }
+  else
+  {
+    head_->val[head_->first] = "";
+    head_->first += 1;
+    size_--;
+  }
+}
+
+void ULListStr::pop_back()
+{
+  if (tail_ == nullptr)
+  {
+    return;
+  }
+  if (tail_->last == 1)
+  {
+    if (tail_->prev == nullptr)
+    {
+      delete tail_;
+      head_ = nullptr;
+      tail_ = nullptr;
+      size_ = 0;
+    }
+    else
+    {
+      Item* temp = tail_;
+      tail_ = tail_->prev;
+      delete temp;
+      size_--;
+    }
+  }
+  else
+  {
+    tail_->last -= 1;
+    tail_->val[tail_->last] = "";
+    size_--;
+  }
+}
+
+std::string const & ULListStr::front() const
+{
+  return head_->val[head_->first];
+}
+
+std::string const & ULListStr::back() const
+{
+  return tail_->val[tail_->last - 1];
+}
+
+std::string* ULListStr::getValAtLoc(size_t loc) const
+{
+  Item* curr = head_;
+  size_t sum = 0;
+  if (loc < 0 || loc > size_)
+  {
+    return nullptr;
+  }
+
+  while (curr != nullptr)
+  {
+    if (sum + (curr->last - curr->first) < loc)
+    {
+      sum += (curr->last - curr->first);
+      curr = curr->next;
+    }
+    else
+    {
+      return &curr->val[curr->first + loc - sum];
+    }
+  }
+
+  return nullptr;
+}
+
+/* for testing
+void ULListStr::print()
+{
+  Item* Curritem = head_;
+  while (Curritem != NULL)
+  {
+      for (unsigned int j = Curritem->first; j < Curritem->last; j++)
+      {
+        std::cout << Curritem->val[j] << " "; 
+      }
+      Curritem = Curritem->next;
+  }
+  std::cout << std::endl;
+}
+*/
 
 void ULListStr::set(size_t loc, const std::string& val)
 {
