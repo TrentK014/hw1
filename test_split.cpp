@@ -39,7 +39,7 @@ int main(int argc, char* argv[])
   {
     cout << temp3->value << " ";
     temp3 = temp3->next;
-  } 
+  }
 
   Node* temp1 = oddnums;
   cout << "odds are: ";

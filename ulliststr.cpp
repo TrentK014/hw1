@@ -1,7 +1,7 @@
 #include <cstddef>
 #include <stdexcept>
 #include "ulliststr.h"
-//#include <iostream>
+#include <iostream>
 
 ULListStr::ULListStr()
 {
@@ -32,6 +32,8 @@ void ULListStr::push_front(const std::string& val)
   if (head_ == nullptr)
   {
     Item* temp = new Item();
+    temp->next = nullptr;
+    temp->prev = nullptr;
     temp->last = 10;
     temp->first = 9;
     temp->val[9] = val;
@@ -46,14 +48,15 @@ void ULListStr::push_front(const std::string& val)
     size_++;
   }
   else
-  {
+  { //adds new item
     Item* temp = new Item();
     temp->last = ARRSIZE;
     temp->first = ARRSIZE - 1;
     temp->next = head_;
+    temp->prev = nullptr;
     head_->prev = temp;
-    temp->val[ARRSIZE - 1] = val;
     head_ = temp;
+    head_->val[ARRSIZE - 1] = val;
     size_ += 1;
   }
 }
@@ -63,6 +66,8 @@ void ULListStr::push_back(const std::string& val)
   if (head_ == nullptr)
   {
     Item* temp = new Item();
+    temp->next = nullptr;
+    temp->prev = nullptr;
     temp->last = 1;
     temp->first = 0;
     temp->val[0] = val;
@@ -71,13 +76,14 @@ void ULListStr::push_back(const std::string& val)
     size_ += 1;
   }
   else if (tail_->last == ARRSIZE)
-  {
+  { //adds new item
     Item* temp = new Item();
     temp->last = 1;
     temp->first = 0;
     temp->val[0] = val;
-    tail_->next = temp;
     temp->prev = tail_; 
+    temp->next = nullptr;
+    tail_->next = temp;
     tail_ = temp;
     size_ += 1;
   }
@@ -109,6 +115,7 @@ void ULListStr::pop_front()
       Item* temp = head_;
       head_ = head_->next; 
       delete temp;
+      head_->prev = nullptr;
       size_ -= 1;
     }
   }
@@ -140,6 +147,7 @@ void ULListStr::pop_back()
       Item* temp = tail_;
       tail_ = tail_->prev;
       delete temp;
+      tail_->next = nullptr;
       size_--;
     }
   }
@@ -165,14 +173,14 @@ std::string* ULListStr::getValAtLoc(size_t loc) const
 {
   Item* curr = head_;
   size_t sum = 0;
-  if (loc < 0 || loc > size_)
+  if (loc < 0 || loc >= size_)
   {
     return nullptr;
   }
 
   while (curr != nullptr)
   {
-    if (sum + (curr->last - curr->first) < loc)
+    if (sum + (curr->last - curr->first - 1) < loc)
     {
       sum += (curr->last - curr->first);
       curr = curr->next;
@@ -186,7 +194,6 @@ std::string* ULListStr::getValAtLoc(size_t loc) const
   return nullptr;
 }
 
-/* for testing
 void ULListStr::print()
 {
   Item* Curritem = head_;
@@ -200,7 +207,7 @@ void ULListStr::print()
   }
   std::cout << std::endl;
 }
-*/
+
 
 void ULListStr::set(size_t loc, const std::string& val)
 {
